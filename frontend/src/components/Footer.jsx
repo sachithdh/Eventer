@@ -81,7 +81,7 @@ export const Footer = () => {
                 </Grid>
                 <Grid item xs={12} sx={{ borderTop: '1px solid #333', pt: 2, mt: 4, textAlign: 'center' }}>
                     <Typography variant="body2">
-                        © {new Date().getFullYear()} Company Name. All rights reserved.
+                        © {new Date().getFullYear()} Eventer. All rights reserved.
                     </Typography>
                 </Grid>
             </Grid>
