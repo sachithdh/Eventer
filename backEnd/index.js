@@ -1,7 +1,8 @@
 const express = require("express");
 const cors = require("cors");
 const connectDB = require("./config/db")
-const eventRoutes = require("./routes/eventRoutes")
+const eventRoutes = require("./routes/eventRoutes");
+const userRoutes = require("./routes/userRoutes");
 const errorHadler = require("./middleware/errorHandler");
 
 //enviromental variable form .env
@@ -18,6 +19,7 @@ connectDB()
 
 // Routes
 app.use('/api', eventRoutes)
+app.use('/api', userRoutes)
 
 // Error handling
 app.use(errorHadler)
