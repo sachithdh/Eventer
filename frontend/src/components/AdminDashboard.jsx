@@ -24,6 +24,12 @@ import {
   DialogContentText,
   DialogTitle,
   CircularProgress,
+  IconButton,
+  TextField,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
 } from "@mui/material";
 import {
   Event as EventIcon,
@@ -44,6 +50,7 @@ import {
 import axios from "axios";
 import { jwtDecode } from "jwt-decode";
 import { ReviewPannel } from "./ReviewPannel";
+import EditIcon from "@mui/icons-material/Edit";
 
 export const AdminDashboard = () => {
   const [chartData, setChartData] = useState([]);
@@ -51,12 +58,15 @@ export const AdminDashboard = () => {
   const [userData, setUserData] = useState([]);
   const [activeTab, setActiveTab] = useState("events");
   const [darkMode, setDarkMode] = useState(false);
+  const [open, setOpen] = useState(false);
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
   const [selectedItemId, setSelectedItemId] = useState(null);
   const [deleteType, setDeleteType] = useState(null);
   const [loading, setLoading] = useState(false); // Overall loading state
   const [eventsLoading, setEventsLoading] = useState(false); // Loading state for events
   const [deleting, setDeleting] = useState(false); // Deleting state
+  const [selectedRole, setSelectedRole] = useState("");
+  const [selectedUserId, setSelctedUserId] = useState("");
 
   const monthlyData = {
     Jan: { events: 0, attendees: 0 },
@@ -78,13 +88,12 @@ export const AdminDashboard = () => {
     setLoading(true); // Start overall loading
     setEventsLoading(true); // Start loading for events
     const user = JSON.parse(localStorage.getItem("user"));
+    const jwToken = JSON.stringify(user.token);
     if (user) {
-      const token = jwtDecode(user.token);
-
       // Fetch events
       axios
         .get("http://localhost:5000/api/event/getEvent", {
-          headers: { Authorization: `Bearer ${token}` },
+          headers: { Authorization: `Bearer ${jwToken}` },
         })
         .then((res) => {
           const eventsData = res.data;
@@ -124,7 +133,7 @@ export const AdminDashboard = () => {
       // Fetch users
       axios
         .get("http://localhost:5000/api/user", {
-          headers: { Authorization: `Bearer ${token}` },
+          headers: { Authorization: `Bearer ${jwToken}` },
         })
         .then((res) => {
           setUserData(res.data);
@@ -188,6 +197,31 @@ export const AdminDashboard = () => {
   };
 
   const handleAddUser = () => {};
+  const handleClose = () => {
+    setOpen(false);
+  };
+  const handleRoleChange = (event) => {
+    setSelectedRole(event.target.value); // Update state with the selected role
+    console.log(event.target.value); // Log the selected role
+  };
+
+  const handleSubmit = () => {
+    e.preventDefault();
+
+    if (selectedUserId && selectedRole) {
+      try {
+        axios.put(`http://localhost:5000/api/user/edit/${selectedUserId}`, {
+          role: selectedRole,
+        });
+        console.log("User role updated:", response.data);
+        // handleClose(); // Close the dialog after success
+      } catch (error) {
+        console.error("Error updating user role:", error);
+      }
+    }
+    setSelctedUserId(null);
+    setSelectedRole(null);
+  };
 
   const theme = createTheme({
     palette: {
@@ -289,56 +323,118 @@ export const AdminDashboard = () => {
         );
       case "users":
         return (
-          <TableContainer component={Paper} elevation={3}>
-            <Table>
-              <TableHead>
-                <TableRow>
-                  <TableCell>Name</TableCell>
-                  <TableCell>Email</TableCell>
-                  <TableCell>Role</TableCell>
-                  <TableCell>Actions</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {userData.length > 0 ? (
-                  userData.map((user) => (
-                    <TableRow key={user._id}>
-                      <TableCell>
-                        <Box sx={{ display: "flex", alignItems: "center" }}>
-                          <Avatar sx={{ mr: 2 }}>{user.first_name[0]}</Avatar>
-                          {user.first_name}
-                        </Box>
-                      </TableCell>
-                      <TableCell>{user.email}</TableCell>
-                      <TableCell>{user.role}</TableCell>
-                      <TableCell>
-                        <Button
-                          size="small"
-                          variant="contained"
-                          color="primary"
-                          sx={{ mr: 1 }}
-                        >
-                          Edit
-                        </Button>
-                        <Button
-                          size="small"
-                          variant="contained"
-                          color="secondary"
-                          onClick={() => handleDeleteClick(user._id, "user")}
-                        >
-                          Delete
-                        </Button>
-                      </TableCell>
-                    </TableRow>
-                  ))
-                ) : (
+          <>
+            <TableContainer component={Paper} elevation={3}>
+              <Table>
+                <TableHead>
                   <TableRow>
-                    <TableCell colSpan={4}>No users found</TableCell>
+                    <TableCell>Name</TableCell>
+                    <TableCell>Email</TableCell>
+                    <TableCell>Role</TableCell>
+                    <TableCell>Actions</TableCell>
                   </TableRow>
-                )}
-              </TableBody>
-            </Table>
-          </TableContainer>
+                </TableHead>
+                <TableBody>
+                  {userData.length > 0 ? (
+                    userData.map((user) => (
+                      <TableRow key={user._id}>
+                        <TableCell>
+                          <Box sx={{ display: "flex", alignItems: "center" }}>
+                            <Avatar sx={{ mr: 2 }}>{user.first_name[0]}</Avatar>
+                            {user.first_name}
+                          </Box>
+                        </TableCell>
+                        <TableCell>{user.email}</TableCell>
+                        <TableCell>
+                          <Box sx={{ display: "flex", alignItems: "center" }}>
+                            <Typography variant="body1" sx={{ mr: 1 }}>
+                              {user.role}
+                            </Typography>
+                            <IconButton
+                              sx={{
+                                padding: "4px",
+                                verticalAlign: "middle",
+                                scale: "0.8",
+                              }}
+                              onClick={() => {
+                                setOpen(true);
+                                setSelctedUserId(user._id);
+                                console.log(selectedUserId);
+                              }}
+                            >
+                              <EditIcon fontSize="small" />
+                            </IconButton>
+                          </Box>
+                        </TableCell>
+
+                        <TableCell>
+                          <Button
+                            size="small"
+                            variant="contained"
+                            color="primary"
+                            sx={{ mr: 1 }}
+                          >
+                            Edit
+                          </Button>
+                          <Button
+                            size="small"
+                            variant="contained"
+                            color="secondary"
+                            onClick={() => handleDeleteClick(user._id, "user")}
+                          >
+                            Delete
+                          </Button>
+                        </TableCell>
+                      </TableRow>
+                    ))
+                  ) : (
+                    <TableRow>
+                      <TableCell colSpan={4}>No users found</TableCell>
+                    </TableRow>
+                  )}
+                </TableBody>
+              </Table>
+            </TableContainer>
+
+            <Dialog
+              open={open}
+              onClose={handleClose}
+              PaperProps={{
+                component: "form",
+                onSubmit: (event) => {
+                  handleSubmit;
+                },
+              }}
+            >
+              <DialogTitle>Edit user role</DialogTitle>
+              <DialogContent>
+                <DialogContentText></DialogContentText>
+                <FormControl
+                  fullWidth
+                  required
+                  variant="standard"
+                  margin="dense"
+                >
+                  <InputLabel id="role-label">New user role</InputLabel>
+                  <Select
+                    labelId="role-label"
+                    id="role"
+                    name="role"
+                    defaultValue=""
+                    label="New user role"
+                    onChange={handleRoleChange}
+                  >
+                    <MenuItem value="admin">Admin</MenuItem>
+                    <MenuItem value="user">User</MenuItem>
+                  </Select>
+                </FormControl>
+              </DialogContent>
+              <DialogActions>
+                <Button onClick={handleClose}>Cancel</Button>
+                <Button type="submit">Save</Button>
+              </DialogActions>
+            </Dialog>
+          </>
         );
       case "analytics":
         return (

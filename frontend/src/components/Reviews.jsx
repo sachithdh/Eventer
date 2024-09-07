@@ -30,7 +30,7 @@ export const Reviews = () => {
   const [userName, setUserName] = useState("");
   const [anchorEl, setAnchorEl] = useState(null);
   const [selectedReview, setSelectedReview] = useState(null);
-  const [snackbarOpen, setSnackbarOpen] = useState(false); // Alert visibility state
+  const [snackbarOpen] = useState(false); // Alert visibility state
   const [alert, setAlert] = useState("");
   const [editReviewId, setEditReviewId] = useState(null); // To track which review is being edited
   const [editReviewText, setEditReviewText] = useState(""); // For review editing
@@ -46,9 +46,11 @@ export const Reviews = () => {
 
     const user = JSON.parse(localStorage.getItem("user"));
     if (user) {
-      const jsonString = JSON.stringify(user);
+      const jsonString = JSON.stringify(user.token);
 
+      console.log("JWTOKEN:", jsonString);
       const jwtToken = jwtDecode(jsonString);
+
       setUserId(jwtToken._id);
     }
   }, []);
@@ -116,7 +118,7 @@ export const Reviews = () => {
       setUserReview("");
       setValue(0);
       setAlert("post");
-      setSnackbarOpen(true); // Show alert when review is added successfully
+      true; // Show alert when review is added successfully
     } catch (err) {
       console.log("Error adding review:", err);
     }
@@ -159,7 +161,7 @@ export const Reviews = () => {
       );
       setEditReviewId(null); // Exit edit mode
       setAlert("edit");
-      setSnackbarOpen(true);
+      true;
     } catch (err) {
       console.log("Error updating review:", err);
     }
@@ -172,7 +174,7 @@ export const Reviews = () => {
       );
       setReviews(reviews.filter((r) => r._id !== selectedReview._id));
       setAlert("delete");
-      setSnackbarOpen(true);
+      true;
     } catch (err) {
       console.log("Error deleting review:", err);
     }
@@ -182,7 +184,7 @@ export const Reviews = () => {
     if (reason === "clickaway") {
       return;
     }
-    setSnackbarOpen(false); // Close the snackbar
+    false; // Close the snackbar
   };
 
   return (
