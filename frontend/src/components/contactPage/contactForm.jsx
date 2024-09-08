@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { TextField, Button, Box, Typography, Alert } from "@mui/material";
 import axios from "axios";
+import '../contactPage/Contact.css'
 
 const ContactForm = () => {
   const [formData, setFormData] = useState({
@@ -17,7 +18,6 @@ const ContactForm = () => {
     setFormData({ ...formData, [name]: value });
   };
 
-  // Validate form fields
   const validate = () => {
     let errors = {};
     if (!formData.name) errors.name = "Name is required";
@@ -30,26 +30,23 @@ const ContactForm = () => {
     return errors;
   };
 
-  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     const errors = validate();
     if (Object.keys(errors).length === 0) {
-      setFormErrors({}); // Clear any previous errors
-      setFormSubmitted(false); // Reset form submission status
+      setFormErrors({});
+      setFormSubmitted(false);
 
       try {
-        // Sending form data to backend
         const response = await axios.post(
           "http://localhost:5000/api/contact/addContact",
           formData
         );
 
         if (response) {
-          // Success
           console.log("Data saved successfully:", response.data);
-          setFormSubmitted(true); // Show success message
+          setFormSubmitted(true); 
           setFormData({ name: "", email: "", message: "" });
         } else {
           console.error("Failed to save data:", response.status);
@@ -61,7 +58,7 @@ const ContactForm = () => {
         );
       }
     } else {
-      setFormErrors(errors); // Display validation errors
+      setFormErrors(errors); 
     }
   };
 
@@ -79,8 +76,8 @@ const ContactForm = () => {
       }}
       onSubmit={handleSubmit}
     >
-      <Typography variant="h4" component="h1" gutterBottom>
-        Contact Us
+      <Typography variant="h4" component="h1" gutterBottom className="contact-form">
+        <h3>Or leave a short message..</h3>
       </Typography>
       {formSubmitted && (
         <Alert severity="success">
