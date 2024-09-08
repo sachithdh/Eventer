@@ -1,5 +1,5 @@
 .contact-container {
-    position: relative; /* Ensure positioning of child elements */
+    position: relative; 
     margin-top: 2rem;
     margin-bottom: 20px;
   }
@@ -41,27 +41,27 @@
   }
   
   .talk-to-team {
-    background: #e1bee7; /* Light lavender */
+    background: #e1bee7; 
   }
   
   .contact-support {
-    background: #b3e5fc; /* Light sky blue */
+    background: #b3e5fc; 
   }
   
   .visit-us {
-    background: #c8e6c9; /* Light mint green */
+    background: #c8e6c9;
   }
   
   .contact-box.talk-to-team:hover {
-    background: #d89ac5; /* Slightly darker lavender */
+    background: #d89ac5; 
   }
   
   .contact-box.contact-support:hover {
-    background: #83c5e6; /* Slightly darker sky blue */
+    background: #83c5e6;
   }
   
   .contact-box.visit-us:hover {
-    background: #a6d0a7; /* Slightly darker mint green */
+    background: #a6d0a7; 
   }
   
   .contact-box h5 {
@@ -77,34 +77,34 @@
   .contact-box .contact-email, 
   .contact-box .contact-address {
     font-weight: bold;
-    color: #000; /* Default text color for better visibility */
+    color: #000; 
   }
   
   .contact-box .contact-number {
-    color: #260fbc; /* Bright purple for phone number */
+    color: #260fbc; 
   }
   
   .contact-box .contact-email {
-    color: #2711b1; /* Green for email */
+    color: #2711b1; 
   }
   
   .contact-box .contact-address {
-    color: #270acf; /* Blue for address */
+    color: #270acf; 
   }
 
 .circle-image-container {
     display: flex;
     justify-content: center;
     align-items: center;
-    margin: 20px 0; /* Adjust margin as needed */
+    margin: 20px 0; 
 }
 
 .circle-image {
-    width: 400px; /* Adjust the size as needed */
-    height: 200px; /* Keep it equal to width for a perfect circle */
+    width: 400px; 
+    height: 200px; 
     border-radius: 0%;
-    object-fit: cover; /* Ensures the image fits the circle */
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1); /* Optional shadow for a nice effect */
+    object-fit: cover; 
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1); 
 }
 
     

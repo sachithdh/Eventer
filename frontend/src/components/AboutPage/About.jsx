@@ -4,25 +4,18 @@ import teamMember1 from '../../asset/team-member1.jpg';
 import teamMember2 from '../../asset/team-member2.jpg';
 import teamMember3 from '../../asset/team-member3.jpg';
 import teamMember4 from '../../asset/team-member4.jpg';
-import introImage from '../../asset/Event/10.jpg';
-import introImage2 from '../../asset/Event/11.jpg'; 
 import { useState, useEffect } from 'react';
-import { Avatar, CircularProgress } from "@mui/material";
-import Box from "@mui/material/Box";
-import { Stack, Typography, Button, TextField } from "@mui/material";
-
-
+import { CircularProgress, Box } from "@mui/material";
 
 export const About = () => {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    // Set loading to false when component mounts
     setLoading(true);
     setTimeout(()=>{
       setLoading(false);
     },1000);
-  }, []);  // Empty dependency array means this runs only once on mount
+  }, []); 
 
   if (loading) {
     return (
@@ -44,8 +37,6 @@ export const About = () => {
         <div className="intro-content ">
         <div className='about-div-img1'>
           
-          {/* <img src={introImage2} alt="Mission Image" className="intro-image"/> */}
-
           </div>
           <div className="intro-text">
             <h2>Introduction</h2>
@@ -57,8 +48,6 @@ export const About = () => {
       <section className="about-mission">
         <div className="intro-content">
           <div className='about-div-img2'>
-          {/* <img src={introImage} alt="Mission Image" className="intro-image"/> */}
-
           </div>
           <div className="intro-text">
             <h2>Our Mission</h2>
@@ -67,7 +56,6 @@ export const About = () => {
         </div>
       </section>
 
-      {/* Team Section */}
       <section className="about-team">
         <h2>Meet OurTeam</h2>
         <div className="team-members">
@@ -91,7 +79,6 @@ export const About = () => {
             <h3>Mahesh</h3>
             <p>Event Coordinator</p>
           </div>
-          {/* Add more team members as needed */}
         </div>
       </section>
     </div>

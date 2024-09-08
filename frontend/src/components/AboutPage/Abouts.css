@@ -39,7 +39,7 @@
 .about-team .team-member {
   text-align: center;
   margin: 20px;
-  flex-basis: calc(100% / 4 - 40px); /* Adjusts the width of each team member to fit four in one row */
+  flex-basis: calc(100% / 4 - 40px); 
   background-color: #bce2ec;
   padding: 20px;
   border-radius: 10px;
@@ -62,18 +62,18 @@
 
 @media (max-width: 768px) {
   .about-team .team-members {
-    flex-wrap: wrap; /* Allow wrapping on smaller screens */
+    flex-wrap: wrap;
   }
 
   .about-team .team-member {
-    flex-basis: 100%; /* Make each team member full-width on small screens */
+    flex-basis: 100%; 
     margin: 20px 0;
   }
   
   .about-intro .intro-image,
   .about-mission .intro-image {
-    max-width: 60%; /* Increase the image size on smaller screens */
-    margin: 0 auto; /* Center the image */
+    max-width: 60%; 
+    margin: 0 auto;
   }
 
   .about-intro .intro-text,
@@ -98,14 +98,14 @@
 .about-mission .intro-content {
   display: flex;
   align-items: center;
-  flex-direction: row-reverse; /* This line makes the image on the right side */
+  flex-direction: row-reverse;
   margin-bottom: 40px;
 }
 
 .about-mission .intro-image {
   flex: 1;
   max-width: 40%;
-  margin-left: 20px; /* Adjusts spacing to the left of the image */
+  margin-left: 20px; 
 }
 
 .about-intro .intro-text,
@@ -117,11 +117,10 @@
 .about-div-img1 {
   width: 320px;
   height: 250px;
-  /* background-color: black; */
   background-image: url('../../asset/Event/10.jpg');
-  background-size: cover; /* Image covers the entire div */
-    background-position: center; /* Center the image */
-    background-repeat: no-repeat; /* Prevent the image from repeating */
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat; 
   border-radius: 30px;
   overflow: hidden;
 }
@@ -129,11 +128,10 @@
 .about-div-img2 {
   width: 320px;
   height: 250px;
-  /* background-color: black; */
   background-image: url('../../asset/Event/11.jpg');
-  background-size: cover; /* Image covers the entire div */
-    background-position: center; /* Center the image */
-    background-repeat: no-repeat; /* Prevent the image from repeating */
+  background-size: cover; 
+  background-position: center; 
+  background-repeat: no-repeat; 
   border-radius: 30px;
   overflow: hidden;
 }

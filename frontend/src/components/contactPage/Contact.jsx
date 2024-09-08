@@ -4,18 +4,17 @@ import ContactForm from './contactForm';
 import './Contact.css';
 import image from '../../asset/contactImage2.jpg';
 import { useState, useEffect } from 'react';
-import { Avatar, CircularProgress } from "@mui/material";
+import {CircularProgress } from "@mui/material";
 
 export const Contact = () => {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    // Set loading to false when component mounts
     setLoading(true);
     setTimeout(()=>{
       setLoading(false);
     },1000);
-  }, []);  // Empty dependency array means this runs only once on mount
+  }, []); 
 
   if (loading) {
     return (
@@ -31,8 +30,6 @@ export const Contact = () => {
       </Box>
     );
   }
-
-
 
   return (
     <Container className="contact-container">
@@ -81,7 +78,7 @@ export const Contact = () => {
               Visiting nearby? Stop in and see us.
             </Typography>
             <Typography variant="h6" className="contact-address">
-              123 Reid Avenue, Suite 100, Colombo, Sri Lanka.
+              43, Reid Avenue, Colombo 07, <br />Sri Lanka.
             </Typography>
           </Box>
         </Grid>
