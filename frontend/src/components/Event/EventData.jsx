@@ -30,7 +30,8 @@ import {
 import { Reviews } from "../Reviews";
 import { EventParticipant } from "./EventParticipant";
 import FormDialogDelete from "./EventDeleteDialog";
-
+import { EventEdit } from "./EventEdit";
+import { useNavigate } from "react-router-dom";
 // Convert binary data to base64
 const convertBinaryToBase64 = (binaryData, contentType) => {
   if (binaryData && binaryData instanceof Uint8Array) {
@@ -58,6 +59,7 @@ export default function EventData() {
   const [snackbarOpen, setSnackbarOpen] = useState(false); // Alert visibility state
   const [alert, setAlert] = useState("");
   const [message, setMessage] = useState("");
+  const navigate = useNavigate();
 
   const location = useLocation();
   const category = location.state?.category;
@@ -210,6 +212,7 @@ export default function EventData() {
     }
   };
 
+  // Fetch the event data
   useEffect(() => {
     const fetchEvent = async () => {
       try {
@@ -432,6 +435,16 @@ export default function EventData() {
             </Button>
 
             {userId === eventCreatedId ? <FormDialogDelete /> : null}
+            {userId === eventCreatedId ? (
+              <Button
+                sx={{bgcolor: '#ede7f6', borderRadius:10}}
+                onClick={() => {
+                  navigate(`/edit-event/${eventId}`);
+                }}
+              >
+                Edit
+              </Button>
+            ) : null}
             {/* <FormDialogDelete/> */}
           </Box>
         </Container>

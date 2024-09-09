@@ -26,38 +26,39 @@ import {
   AddPhotoAlternate,
 } from "@mui/icons-material";
 
-import addImg from "../asset/addImage.jpg";
+import addImg from "../../asset/addImage.jpg";
 import axios from "axios";
 import { jwtDecode } from "jwt-decode"; // Correct import
 import { useNavigate } from "react-router-dom";
-import Ceatlogo from '../asset/Icon/colombo.png';
-import Maxxislogo from '../asset/Icon/compsoc.jpg';
-import Bridgestonelogo from '../asset/Icon/IEEE.jpg';
-import Dunloplogo from '../asset/Icon/images (1).jpg';
-import Michelinlogo from '../asset/Icon/Systemlogo2.jpg';
-import Federallogo from '../asset/Icon/rotaract.jpg';
+import { useParams } from "react-router-dom";
 
 const Input = styled("input")({
   display: "none",
 });
 
-export const AddEvent = () => {
+// Convert binary data to base64
+const convertBinaryToBase64 = (binaryData, contentType) => {
+  if (binaryData && binaryData instanceof Uint8Array) {
+    const binaryString = Array.from(binaryData)
+      .map((byte) => String.fromCharCode(byte))
+      .join("");
+    return `data:${contentType};base64,${btoa(binaryString)}`;
+  } else {
+    console.error("Invalid binary data provided:", binaryData);
+    return null;
+  }
+};
+
+export const EventEdite = () => {
   const [userId, setUserId] = useState("");
   const [category, setCategory] = useState(""); // For event category
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [alertMessage, setAlertMessage] = useState("");
   const [createdEvent, setCreatedEvent] = useState({});
-  const [error, setError] = useState();
+  const [eventData, setEventdata] = useState({});
   const navigate = useNavigate();
-
-  useEffect(() => {
-    const user = JSON.parse(localStorage.getItem("user"));
-    const token = user?.token;
-    const jwStr = jwtDecode(token);
-    const user_id = jwStr._id;
-    setUserId(user_id);
-  }, []);
-
+  const { eventId } = useParams();
+  const [loading, setLoading] = useState(true);
   const [coverImg, setCoverImg] = useState(null);
   const [formData, setFormData] = useState({
     title: "",
@@ -71,6 +72,56 @@ export const AddEvent = () => {
   });
   const [errors, setErrors] = useState({});
 
+  console.log(eventData);
+  //fetch the user
+  useEffect(() => {
+    const fetchEvent = async () => {
+      try {
+        const response = await axios.get(
+          `http://localhost:5000/api/event/getEvent/${eventId}`
+        );
+
+        let eventData = response.data;
+        setFormData(eventData.title);
+        console.log(formData.title);
+
+        console.log("ljfoej", eventData);
+
+        if (eventData.cover_image) {
+          const base64Image = convertBinaryToBase64(
+            new Uint8Array(eventData.cover_image.data),
+            eventData.cover_image.contentType
+          );
+          eventData.cover_image = base64Image;
+        }
+
+        setEventdata(eventData);
+        setLoading(false);
+      } catch (error) {
+        console.error("Failed to fetch the event:", error);
+        setError("Failed to fetch the event");
+        setLoading(false);
+      } finally {
+        const timer = setTimeout(() => {
+          setLoading(false);
+        }, 1200);
+      }
+    };
+    fetchEvent();
+  }, [eventId]);
+
+  console.log(eventData);
+
+  //get user id from local storage
+  useEffect(() => {
+    const user = JSON.parse(localStorage.getItem("user"));
+    const token = user?.token;
+    const jwStr = jwtDecode(token);
+    const user_id = jwStr._id;
+    setUserId(user_id);
+  }, []);
+
+  // Handle input change
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({
@@ -84,6 +135,7 @@ export const AddEvent = () => {
     }));
   };
 
+  // Handle image change
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -91,43 +143,11 @@ export const AddEvent = () => {
     }
   };
 
+  // Handle category change
   const handleCategoryChange = (e) => {
     setCategory(e.target.value);
   };
 
-  // Update event Id in user collection
-  const updateUser = async (eventData) => {
-    const user = JSON.parse(localStorage.getItem("user"));
-    if (user && user.token) {
-      try {
-        const userData = await axios.get(
-          `http://localhost:5000/api/user/${userId}`,
-          {
-            headers: {
-              Authorization: `Bearer ${user.token}`,
-            },
-          }
-        );
-        const currentEvents = userData.data.created_event || [];
-
-        await axios.put(
-          `http://localhost:5000/api/user/edit/${userId}`,
-          {
-            created_event: [...currentEvents, eventData._id],
-          },
-          {
-            headers: {
-              Authorization: `Bearer ${user.token}`,
-            },
-          }
-        );
-      } catch (err) {
-        console.log("Error: ", err);
-      }
-    } else {
-      console.log("User not logged in or invalid access token");
-    }
-  };
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -145,7 +165,6 @@ export const AddEvent = () => {
       setErrors(newErrors);
       return;
     }
-
     const formDataToSend = new FormData();
     Object.keys(formData).forEach((key) => {
       formDataToSend.append(key, formData[key]);
@@ -165,8 +184,8 @@ export const AddEvent = () => {
     const user = JSON.parse(localStorage("user"));
     if (user && user.token) {
       try {
-        const result = await axios.post(
-          "http://localhost:5000/api/event/createEvent",
+        const result = await axios.put(
+          `http://localhost:5000/api/event/edit/${eventId}`,
           formDataToSend,
           {
             headers: {
@@ -190,6 +209,7 @@ export const AddEvent = () => {
     }
   };
 
+  // Handle snackbar close
   const handleSnackbarClose = (event, reason) => {
     if (reason === "clickaway") {
       return;
@@ -200,10 +220,7 @@ export const AddEvent = () => {
   return (
     <>
       <Box
-        sx={{ height:"100%", width: '100%' ,display: 'flex', p: 3,
-          justifyContent: 'flex-start', flexDirection: 'column', alignItems: 'center',
-                
-            }}
+        sx={{ height: "100vh", maxWidth: 1000, margin: "auto", p: 3, mt: 8 }}
       >
         <Typography
           variant="h3"
@@ -211,20 +228,18 @@ export const AddEvent = () => {
           gutterBottom
           sx={{ fontWeight: "bold", color: "#333" }}
         >
-          Create New Event
+          Edit Event
         </Typography>
         <Card
           elevation={0}
           sx={{
-            width: '65%',
             borderRadius: 4,
             p: 4,
-            backgroundColor: "white",
+            backgroundColor: "#f9f9f9",
             boxShadow: "0px 4px 20px rgba(0,0,0,0.1)",
-            mt:4
           }}
         >
-          <CardContent >
+          <CardContent>
             <Grid container spacing={4}>
               <Grid item xs={12} md={6}>
                 <Box
@@ -238,7 +253,7 @@ export const AddEvent = () => {
                     variant="filled"
                     label="Event Title"
                     name="title"
-                    value={formData.title}
+                    value={eventData.title}
                     onChange={handleInputChange}
                     error={!!errors.title}
                     helperText={errors.title}
@@ -253,7 +268,7 @@ export const AddEvent = () => {
                     label="Start Date"
                     name="start_date"
                     type="date"
-                    value={formData.start_date}
+                    value={eventData.start_date}
                     onChange={handleInputChange}
                     InputProps={{
                       startAdornment: (
@@ -273,7 +288,7 @@ export const AddEvent = () => {
                     label="Start Time"
                     name="start_time"
                     type="time"
-                    value={formData.start_time}
+                    value={eventData.start_time}
                     onChange={handleInputChange}
                     InputProps={{
                       startAdornment: (
@@ -293,7 +308,7 @@ export const AddEvent = () => {
                     label="End Date"
                     name="end_date"
                     type="date"
-                    value={formData.end_date}
+                    value={eventData.end_date}
                     onChange={handleInputChange}
                     InputProps={{
                       startAdornment: (
@@ -313,7 +328,7 @@ export const AddEvent = () => {
                     label="End Time"
                     name="end_time"
                     type="time"
-                    value={formData.end_time}
+                    value={eventData.end_time}
                     onChange={handleInputChange}
                     InputProps={{
                       startAdornment: (
@@ -332,7 +347,7 @@ export const AddEvent = () => {
                     fullWidth
                     label="Venue"
                     name="venue"
-                    value={formData.venue}
+                    value={eventData.venue}
                     onChange={handleInputChange}
                     InputProps={{
                       startAdornment: (
@@ -350,7 +365,7 @@ export const AddEvent = () => {
                     fullWidth
                     label="Description (*Max 200 characters)"
                     name="description"
-                    value={formData.description}
+                    value={eventData.description}
                     onChange={handleInputChange}
                     multiline
                     rows={4}
@@ -372,7 +387,7 @@ export const AddEvent = () => {
                     label="Capacity"
                     name="capacity"
                     type="number"
-                    value={formData.capacity}
+                    value={eventData.capacity}
                     onChange={handleInputChange}
                     InputProps={{
                       startAdornment: (
@@ -392,7 +407,7 @@ export const AddEvent = () => {
                     <Select
                       labelId="category-label"
                       id="category"
-                      value={category}
+                      value={eventData.category}
                       onChange={handleCategoryChange}
                       error={!!errors.category}
                       sx={{
@@ -405,6 +420,7 @@ export const AddEvent = () => {
                       <MenuItem value={"communities"}>Communities</MenuItem>
                       <MenuItem value={"theaters"}>Theaters</MenuItem>
                       <MenuItem value={"concerts"}>Concerts</MenuItem>
+                      <MenuItem value={"event"}>Event</MenuItem>
                     </Select>
                   </FormControl>
 
@@ -426,7 +442,7 @@ export const AddEvent = () => {
                       },
                     }}
                   >
-                    Create Event
+                    Edite Event
                   </Button>
                 </Box>
               </Grid>
@@ -492,46 +508,9 @@ export const AddEvent = () => {
                         }}
                       >
                         <AddPhotoAlternate />
-                        
                       </IconButton>
-                      
                     </label>
                   </Box>
-                 
-
-                  <Box sx={{
-                    mt:3,
-                    display:'flex',
-                    justifyContent:'center',
-                    alignItems:'center',
-                    width: '90%',
-                    gap:4,
-                    flexWrap: 'wrap',
-                    height: 'auto',
-                    p:2
-                  }}>
-                  <img src={Michelinlogo} style={{
-                        width:180,
-                        height:100
-                      }}/>
-                  <img src={Maxxislogo} style={{
-                        width:180,
-                        height:100
-                      }}/>
-                  <img src={Bridgestonelogo} style={{
-                       width:180,
-                       height:100
-                      }}/>
-                  <img src={Dunloplogo} style={{
-                        width:180,
-                        height:100
-                      }}/>
-                  <img src={Ceatlogo} style={{
-                       width:180,
-                       height:100
-                      }}/>
-                  </Box>
-
                 </Box>
               </Grid>
             </Grid>
