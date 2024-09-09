@@ -337,9 +337,6 @@ export const Reviews = () => {
                 },
               },
             }}
-            inputProps={{
-              maxLength: 80,
-            }}
             value={userReview}
             onChange={handleReview}
           />
